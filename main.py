@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Ruta para procesar el JSON enviado por OptimoCamino
-@app.route('/webhook/optimo_camino', methods=['POST'])
+@app.route('/webhook', methods=['POST'])
 def webhook_optimo_camino():
     # Verificamos si se proporcionó un JSON en el cuerpo de la solicitud
     if not request.json:
@@ -33,4 +33,4 @@ def webhook_optimo_camino():
     return jsonify({"message": "JSON procesado exitosamente"}), 200
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=443, debug=True)
+    app.run(host="0.0.0.0", port=80, debug=True)
