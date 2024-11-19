@@ -2,9 +2,13 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Ruta para procesar el JSON enviado por OptimoCamino
+# Variable global para almacenar los datos del webhook
+webhook_data = []
+
 @app.route('/webhook', methods=['POST'])
 def webhook_optimo_camino():
+    global webhook_data
+
     # Verificamos si se proporcionó un JSON en el cuerpo de la solicitud
     if not request.json:
         return jsonify({"error": "No se proporcionó JSON en la solicitud"}), 400
@@ -17,20 +21,17 @@ def webhook_optimo_camino():
 
     # Capturamos y procesamos el JSON
     data = request.json
+    webhook_data.append(data)  # Agregamos los datos a la lista global
 
-    # Aquí puedes realizar cualquier operación que desees con los datos JSON capturados
-    # Por ejemplo, imprimirlos
     print("JSON recibido de OptimoCamino:", data)
-
-    # Dependiendo del valor de 'par_confirmada', puedes realizar acciones específicas
-    if data['par_confirmada'] == 'confirmada':
-        # Realizar acciones cuando se confirma la parada
-        pass
-    elif data['par_confirmada'] == 'cancelada':
-        # Realizar acciones cuando se cancela la parada
-        pass
 
     return jsonify({"message": "JSON procesado exitosamente"}), 200
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=80, debug=True)
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    # Proporcionamos los datos en formato JSON para que Streamlit pueda acceder
+    return jsonify(webhook_data)
+
+if __name__ == '__main__':  
+    # Ejecutar el servidor Flask
+    app.run(host='0.0.0.0', port=80, debug=True)
